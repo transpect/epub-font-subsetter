@@ -7,3 +7,9 @@
 [submodule "xproc-util"]
 	path = xproc-util
 	url = https://github.com/transpect/xproc-util.git
+[submodule "font-tools"]
+	path = font-tools
+	url = https://github.com/fonttools/fonttools.git
+[submodule "epub2hub-lib"]
+	path = epub2hub-lib
+	url = https://github.com/transpect/epub2hub-lib.git
