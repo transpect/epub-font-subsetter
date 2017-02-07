@@ -13,3 +13,6 @@
 [submodule "epub2hub-lib"]
 	path = epub2hub-lib
 	url = https://github.com/transpect/epub2hub-lib.git
+[submodule "schema"]
+	path = schema
+	url = https://github.com/transpect/schema-html
