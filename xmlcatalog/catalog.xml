@@ -5,9 +5,10 @@
   
   <nextCatalog catalog="../css-tools/xmlcatalog/catalog.xml"/>
   <nextCatalog catalog="../lib/xmlcatalog/catalog.xml"/>
-   <nextCatalog catalog="../epub2hub-lib/xmlcatalog/catalog.xml"/>
+  <nextCatalog catalog="../epub2hub-lib/xmlcatalog/catalog.xml"/>
   <nextCatalog catalog="../xproc-util/xmlcatalog/catalog.xml"/>
   <nextCatalog catalog="../epub-add-ad/xmlcatalog/catalog.xml"/>
+   <nextCatalog catalog="../schema/xmlcatalog/catalog.xml"/>
   <nextCatalog catalog="../calabash/extensions/transpect/xmlcatalog/catalog.xml"/>
 
 </catalog>
