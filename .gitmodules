@@ -16,3 +16,6 @@
 [submodule "schema"]
 	path = schema
 	url = https://github.com/transpect/schema-html
+[submodule "xslt-util"]
+	path = xslt-util
+	url = https://github.com/transpect/xslt-util
