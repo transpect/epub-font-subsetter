@@ -41,9 +41,9 @@
       <p:input port="source">
         <p:pipe port="source" step="create-font-subset"/>
       </p:input>
-      <p:input port="stylesheet">
+      <!--<p:input port="stylesheet">
         <p:document href="http://transpect.io/css-tools/xsl/css-parser.xsl"/>
-      </p:input>
+      </p:input>-->
       <p:with-option name="debug" select="$debug"/>
       <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
     </css:expand> 
@@ -137,11 +137,13 @@
    <p:with-option name="active" select="$debug"/>
    <p:with-option name="base-uri" select="$debug-dir-uri"/>
   </tr:store-debug>
+  
+ 
 
   <p:for-each name="chars">
     <p:iteration-source select="//tr:chars"/>
-    <p:exec command="bash" arg-separator=";" result-is-xml="false" errors-is-xml="false" cwd=".">
-      <p:with-option name="args" select="concat('infrastructure/pyftsubset.sh;','-g',. ,';',replace(tr:chars/@font-url,'file:/',''))"/>
+     <p:exec command="bash" arg-separator=";" result-is-xml="false" errors-is-xml="false" cwd=".">
+      <p:with-option name="args" select="concat('infrastructure/pyftsubset.sh;','-g',. ,';',replace(tr:chars/@font-url,'file:',''))"/>
     </p:exec>
   </p:for-each>
 
