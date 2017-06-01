@@ -143,7 +143,7 @@
   <p:for-each name="chars">
     <p:iteration-source select="//tr:chars"/>
      <p:exec command="bash" arg-separator=";" result-is-xml="false" errors-is-xml="false" cwd=".">
-      <p:with-option name="args" select="concat('infrastructure/pyftsubset.sh;','-g',. ,';',replace(tr:chars/@font-url,'file:',''))"/>
+      <p:with-option name="args" select="concat('infrastructure/pyftsubset.sh;','-g',. ,';',replace(tr:chars/@font-url,'file:/',''))"/>
     </p:exec>
   </p:for-each>
 
