@@ -8,13 +8,13 @@ function usage {
     exit 1
 }
 
-while getopts "g:o:" opt; do
+while getopts ":g:o" opt; do
     case "${opt}" in
 	g)
 	    GLYPHS=${OPTARG}
 	    ;;
 	o)
-	    OUTFILE=${OPTARG}
+	   OUTFILE=${OPTARG}
 	    ;;
 	\?)
 	    echo "invalid option -$OPTARG" >&2
@@ -34,8 +34,14 @@ fi
 FILE=$(readlink -f $1)
 
 if [[ ! -f $FILE ]]; then
-    echo "$FILE not found"
-    usage
+    echo "path: $1, FILE= $FILE"
+    NEWPATH="/"$1
+    FILE=$(readlink -f $NEWPATH)
+    echo "FILE= $FILE"
+    if [[ ! -f $FILE ]]; then
+	echo "$FILE file not found"
+	usage
+    fi
 fi
 
 if [[ -z $OUTFILE ]]; then
