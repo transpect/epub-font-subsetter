@@ -26,7 +26,7 @@
   <p:option name="font-style" required="false" select="'normal'"/>
   <p:option name="font-weight" required="false" select="'normal'"/>
  
-  <p:output port="result" primary="true" sequence="true">
+  <p:output port="result" primary="false" sequence="true">
     <p:documentation>Ouput </p:documentation>
   </p:output>
   <p:serialization port="result" omit-xml-declaration="false" indent="true"/>
@@ -167,5 +167,14 @@
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
   </tr:create-font-subset>
+  
+  <p:wrap-sequence wrapper="out"/>
+  
+   <cx:message>
+      <p:with-option name="message" select="'FONT SUBSETTER', /*:out"/>
+    </cx:message>
+  
+  <p:sink/>
+
   
 </p:declare-step>
