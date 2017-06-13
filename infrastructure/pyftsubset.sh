@@ -27,30 +27,32 @@ done
 shift $((OPTIND-1))
 
 if [[ -z $1 ]]; then
-  echo "no font as argument"
-  usage
+  echo ""
+  echo "no glyphs used for this font $GLYPHS"
+  exit 1
 fi
 
 FILE=$(readlink -f $1)
 
 if [[ ! -f $FILE ]]; then
-    echo "path: $1, FILE= $FILE"
     NEWPATH="/"$1
     FILE=$(readlink -f $NEWPATH)
-    echo "FILE= $FILE"
     if [[ ! -f $FILE ]]; then
-	echo "$FILE file not found"
-	usage
+     	echo ""
+     	echo "font file not found $1"
+     	exit 1
     fi
 fi
 
 if [[ -z $OUTFILE ]]; then
-    OUTFILE=$FILE.subset.otf
-    echo "write output to $OUTFILE"
+    OUTFILE=$FILE.subset
 fi
 
-echo "file: $FILE"
-echo "glyphs (unicode): $GLYPHS"
-echo "output: $OUTFILE"
+echo ""
+echo "~~~~~ start font subsetting ~~~~~"
+echo "FILE: $FILE"
+echo "GLYPHS (unicode): $GLYPHS"
+echo "OUTPUT: $OUTFILE"
+echo "~~~~~ font subsetting finished ~~~~~"
 
 pyftsubset $FILE --unicodes=$GLYPHS --output-file=$OUTFILE --ignore-missing-glyphs
