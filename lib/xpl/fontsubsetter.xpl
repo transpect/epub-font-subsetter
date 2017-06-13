@@ -109,10 +109,10 @@
                 
 <!--                <xsl:message select="$font-family,$font-weight, $font-style"></xsl:message>-->
 
-                <xsl:variable name="elements" select="collection()[1]//*[matches(@css:font-family,$font-family)]
-                                                                            /descendant::*[matches(@css:font-weight,$font-weight-regex)
-                                                                                           and matches(@css:font-style,$font-style-regex)] "/>
-
+                <xsl:variable name="elements" select="collection()[1]//*[matches(@css:font-family,$font-family)]"/>
+                   
+                                                                             <!--/descendant::*[matches(@css:font-weight,$font-weight-regex)
+                                                                                           and matches(@css:font-style,$font-style-regex)] -->
               <tr:chars>
                 <xsl:attribute name="font-url" select="current()/*:declaration[@property='src']/*:resource[1][not(@format='woff')]/@src"/>
                 <xsl:attribute name="font-family" select="$font-family"/>
@@ -138,8 +138,6 @@
    <p:with-option name="base-uri" select="$debug-dir-uri"/>
   </tr:store-debug>
   
- 
-
   <p:for-each name="chars">
     <p:iteration-source select="//tr:chars"/>
      <p:exec command="bash" arg-separator=";" result-is-xml="false" errors-is-xml="false" cwd=".">
