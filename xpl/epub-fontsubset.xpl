@@ -25,7 +25,9 @@
   <p:option name="font-name" required="false"/>
   <p:option name="font-style" required="false" select="'normal'"/>
   <p:option name="font-weight" required="false" select="'normal'"/>
- 
+  
+  <p:option name="delete-not-used-font" required="false" select="'true'"/>
+   
   <p:output port="result" primary="false" sequence="true">
     <p:documentation>Ouput </p:documentation>
   </p:output>
@@ -38,6 +40,8 @@
   <p:import href="http://transpect.io/xproc-util/file-uri/xpl/file-uri.xpl"/>
   <p:import href="http://transpect.io/fontsubsetter/xpl/fontsubsetter.xpl"/>
   <p:import href="http://transpect.io/fontsubsetter/xpl/unzip-epub.xpl"/>
+  <p:import href="http://transpect.io/xproc-util/recursive-directory-list/xpl/recursive-directory-list.xpl"/>
+  <p:import href="http://transpect.io/xproc-util/zip/xpl/zip.xpl"/>
   
   
   <tr:file-uri name="file-uri">
@@ -55,7 +59,7 @@
   
   <p:sink/>
   
-  <p:for-each name="load-html-files">
+  <p:for-each name="load-html-files" cx:depends-on="unzipping">
     <p:iteration-source select="//file[@type='xhtml']">
       <p:pipe port="result" step="unzipping"/>
     </p:iteration-source>
@@ -82,7 +86,7 @@
   
   <p:wrap-sequence name="wrap" wrapper="html" wrapper-namespace="http://www.w3.org/1999/xhtml"/>
   
-  <p:xslt name="combine-html">
+  <p:xslt name="combine-html" cx:depends-on="wrap">
     
     <p:input port="parameters">
       <p:empty/>
@@ -163,7 +167,7 @@
    </p:input>
   </p:xslt>
   
-  <tr:create-font-subset name="subset">
+  <tr:create-font-subset name="subset" cx:depends-on="combine-html">
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
   </tr:create-font-subset>
@@ -175,6 +179,70 @@
     </cx:message>
   
   <p:sink/>
-
   
+    <tr:recursive-directory-list name="zip-manifest"  cx:depends-on="subset">
+      <p:with-option name="path" select="replace(//@xml:base,'(.*)/$','$1')">
+        <p:pipe port="zip-manifest" step="unzipping"/>
+      </p:with-option>
+    </tr:recursive-directory-list>
+    
+    <tr:store-debug pipeline-step="epub2hub/directory-list">
+      <p:with-option name="active" select="$debug"/>
+      <p:with-option name="base-uri" select="$debug-dir-uri"/>
+    </tr:store-debug>
+    
+    <!--  delete not-subsetted fonts from file list, if they had been subsetted,
+      delete also not-subsetted font, if no subset of them exists, assumption: these fonts are 
+      not used in the epub. You can enable this handling by setting the delete-not-used-font option to 'true' -->
+    <p:choose>
+      <p:when test="$delete-not-used-font = 'true'">
+        <p:delete match="c:directory[@name='font']/c:file[not(matches(@name, '.subset$'))][not(following-sibling::*[1]
+                                                                                          [self::c:file[matches(@name, 'subset$')]]/@name)]"/>
+      </p:when>
+      <p:otherwise>
+        <p:identity/>
+      </p:otherwise>
+    </p:choose>
+    
+  <p:delete name="change-subset-names" 
+      match="c:directory[@name='font']/c:file[following-sibling::*[1]
+                                                                  [self::c:file[matches(@name, 'subset$')]]/@name]
+                                              [starts-with(following-sibling::*[1][self::c:file[matches(@name, 'subset$')]]/@name, @name)]"/>
+    
+    
+    <p:xslt name="directory-list2manifest" cx:depends-on="change-subset-names">
+      <p:input port="stylesheet">
+        <p:inline>
+          <xsl:stylesheet xmlns:c="http://www.w3.org/ns/xproc-step" version="2.0" exclude-result-prefixes="#all">
+            <xsl:template match="/">
+              <c:zip-manifest>
+                <xsl:apply-templates/>
+              </c:zip-manifest>
+            </xsl:template>
+            
+            <xsl:template match="c:file">
+              <xsl:variable name="name" select="concat(string-join(ancestor::*[ancestor::*][self::c:directory]/@name,'/'), '/', replace(@name,'.subset',''))"/>
+              <c:entry name="{$name}" href="{concat(parent::c:directory/@xml:base,'/', @name)}" compression-method="{if(matches($name, 'mimetype$')) then 'stored' else 'deflate'}" compression-level="{if(matches($name, 'mimetype$')) then 'none' else 'smallest'}"/>
+            </xsl:template>
+            
+          </xsl:stylesheet>
+        </p:inline>
+      </p:input>
+      <p:input port="parameters">
+        <p:empty/>
+      </p:input>
+    </p:xslt>
+    
+    <tr:store-debug name="store2">  
+      <p:with-option name="pipeline-step" select="'zipmanifest'"/>
+      <p:with-option name="active" select="$debug"/>
+      <p:with-option name="base-uri" select="$debug-dir-uri"/>
+    </tr:store-debug>
+    
+    <tr:zip name="zip-new-epub" cx:depends-on="directory-list2manifest">
+      <p:with-option name="href" select="concat(replace(//@xml:base,'^(.*)/(.*)/$','$1/'), 'subsetted_',replace($epubfile,'.*/',''))">
+        <p:pipe port="result" step="unzipping"/>
+      </p:with-option>
+    </tr:zip> 
+
 </p:declare-step>
