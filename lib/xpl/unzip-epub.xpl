@@ -13,8 +13,7 @@
   xmlns:epub2hub = "http://www.le-tex.de/namespace/epub2hub"
   version="1.0"
   name="unzip-epub"
-  type="tr:unzip-epub"
-  >
+  type="tr:unzip-epub">
    
   <p:documentation>Step to unzip epub and create filelist</p:documentation>
   
@@ -27,13 +26,20 @@
     <p:documentation>Arbitrary parameters that will be passed to the dynamically executed pipeline.</p:documentation>
   </p:input>
  
-  <p:output port="result" primary="true" sequence="true">
+  <p:output port="result" primary="false" sequence="true">
+    <p:pipe port="result" step="filelist"/>
     <p:documentation>filelist </p:documentation>
+  </p:output>
+  
+  <p:output port="zip-manifest" primary="true" sequence="true">
+<!--    <p:pipe port="result" step="zip-mani"></p:pipe>-->
+    <p:documentation>zip-manifest</p:documentation>
   </p:output>
   
   <p:import href="http://transpect.io/calabash-extensions/unzip-extension/unzip-declaration.xpl"/>
   <p:import href="http://transpect.io/xproc-util/file-uri/xpl/file-uri.xpl"/>
   <p:import href="http://transpect.io/xproc-util/store-debug/xpl/store-debug.xpl"/>
+    <p:import href="http://transpect.io/xproc-util/recursive-directory-list/xpl/recursive-directory-list.xpl"/>
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl" />
 
   <tr:file-uri name="file-uri">
@@ -116,7 +122,7 @@
   </tr:store-debug>
   
   <p:sink/>
-
+  
   <p:load name="load-rootfile">
     <p:with-option name="href" select="/c:rootfile">
       <p:pipe port="result" step="rootfile"/>
@@ -146,4 +152,6 @@
     <p:with-option name="base-uri" select="$debug-dir-uri"/>
   </tr:store-debug>
   
+<!--  <p:sink/>-->
+
 </p:declare-step>
