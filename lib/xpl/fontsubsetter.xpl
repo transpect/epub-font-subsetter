@@ -95,7 +95,7 @@
             <tr:charset>
             <xsl:variable name="context" select="."/>
               <xsl:for-each select="$fonts">
-                <xsl:variable name="font-family" select="replace(current()/*:declaration[@property='font-family']/@value,'&#34;','')"/>
+                <xsl:variable name="font-family" select="replace(replace(current()/*:declaration[@property='font-family']/@value,'''',''),'&#34;','')"/>
                 <xsl:variable name="font-weight" select="if (current()/*:declaration[@property='font-weight']/@value) 
                                                          then current()/*:declaration[@property='font-weight']/@value
                                                          else 'normal'"/>
