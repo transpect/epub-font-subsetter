@@ -221,8 +221,11 @@
             </xsl:template>
             
             <xsl:template match="c:file">
-              <xsl:variable name="name" select="concat(string-join(ancestor::*[ancestor::*][self::c:directory]/@name,'/'), '/', replace(@name,'.subset',''))"/>
-              <c:entry name="{$name}" href="{concat(parent::c:directory/@xml:base,'/', @name)}" compression-method="{if(matches($name, 'mimetype$')) then 'stored' else 'deflate'}" compression-level="{if(matches($name, 'mimetype$')) then 'none' else 'smallest'}"/>
+              <xsl:variable name="name" 
+                           select="if (matches(@name, 'mimetype')) 
+                                   then @name 
+                                   else concat(string-join(ancestor::*[ancestor::*][self::c:directory]/@name,'/'), '/', replace(@name,'.subset',''))"/>
+              <c:entry name="{$name}" href="{concat(parent::c:directory/@xml:base, @name)}" compression-method="{if(matches($name, 'mimetype$')) then 'stored' else 'deflate'}" compression-level="{if(matches($name, 'mimetype$')) then 'none' else 'smallest'}"/>
             </xsl:template>
             
           </xsl:stylesheet>
