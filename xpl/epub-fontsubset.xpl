@@ -109,15 +109,21 @@
              <xsl:variable name="attribut-set" select="current-group()/@*"/>
              
              <xsl:choose>
-               <xsl:when test="current-group()">
-                 <xsl:for-each-group select="current-group()" group-by="@*[1]">
-                   <xsl:for-each-group select="current-group()" group-by="@*[2]">
-                    <xsl:sequence select="current-group()[1]"/>
-                   </xsl:for-each-group>
+               <xsl:when test="current-grouping-key() = 'title'">
+                 <xsl:sequence select="current-group()[1]"/>
+               </xsl:when>
+                <xsl:when test="current-grouping-key() = 'meta'">
+                 <xsl:for-each-group select="current-group()" group-by="@name">
+                  <xsl:sequence select="current-group()[1]"/>
+                 </xsl:for-each-group>
+               </xsl:when>
+               <xsl:when test="current-grouping-key() = 'link'">
+                 <xsl:for-each-group select="current-group()" group-by="@href">
+                  <xsl:sequence select="current-group()[1]"/>
                  </xsl:for-each-group>
                </xsl:when>
                <xsl:otherwise>
-                 <xsl:sequence select="current-group()"></xsl:sequence>
+                 <xsl:sequence select="current-group()"/>
                </xsl:otherwise>
              </xsl:choose>        
            
@@ -151,7 +157,7 @@
           
         <xsl:template match="*:body">
           <div>
-            <xsl:attribute name="xml:base" select="ancestor::*:html[1]/@xml:base"></xsl:attribute>
+            <xsl:attribute name="xml:base" select="ancestor::*:html[1]/@xml:base"/>
             <xsl:apply-templates select="@*, node()"/>
           </div>
         </xsl:template>
@@ -166,6 +172,12 @@
      </p:inline>
    </p:input>
   </p:xslt>
+  
+    <tr:store-debug name="store2">  
+      <p:with-option name="pipeline-step" select="'combined.xhtml'"/>
+      <p:with-option name="active" select="$debug"/>
+      <p:with-option name="base-uri" select="$debug-dir-uri"/>
+    </tr:store-debug>
   
   <tr:create-font-subset name="subset" cx:depends-on="combine-html">
     <p:with-option name="debug" select="$debug"/>
@@ -236,7 +248,7 @@
       </p:input>
     </p:xslt>
     
-    <tr:store-debug name="store2">  
+    <tr:store-debug name="store3">  
       <p:with-option name="pipeline-step" select="'zipmanifest'"/>
       <p:with-option name="active" select="$debug"/>
       <p:with-option name="base-uri" select="$debug-dir-uri"/>
