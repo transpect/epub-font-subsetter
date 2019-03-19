@@ -237,7 +237,7 @@
                            select="if (matches(@name, 'mimetype')) 
                                    then @name 
                                    else concat(string-join(ancestor::*[ancestor::*][self::c:directory]/@name,'/'), '/', replace(@name,'.subset',''))"/>
-              <c:entry name="{$name}" href="{concat(parent::c:directory/@xml:base, @name)}" compression-method="{if(matches($name, 'mimetype$')) then 'stored' else 'deflate'}" compression-level="{if(matches($name, 'mimetype$')) then 'none' else 'smallest'}"/>
+              <c:entry name="{$name}" href="{concat(parent::c:directory/@xml:base, @name)}" compression-method="{if(matches($name, 'mimetype')) then 'stored' else 'deflate'}" compression-level="{if(matches($name, 'mimetype')) then 'none' else 'smallest'}"/>
             </xsl:template>
             
           </xsl:stylesheet>
@@ -259,5 +259,26 @@
         <p:pipe port="result" step="unzipping"/>
       </p:with-option>
     </tr:zip> 
+  
+<!--  epub:zip-->
+  <!--<epub:zip-package name="zip-package">
+    <p:input port="ocf-filerefs">
+      <p:pipe port="files" step="create-ocf"/>
+    </p:input>
+    <p:input port="ops-filerefs">
+      <p:pipe port="result" step="conditionally-remove-nav-from-filelist-if-epub2"/>
+    </p:input>
+    <p:input port="opf-fileref">
+      <p:pipe port="files" step="create-opf"/>
+    </p:input>
+    <p:input port="meta">
+      <p:pipe port="meta" step="epub-convert"/>
+    </p:input>
+    <p:with-option name="base-uri" select="/c:result/@local-href">
+      <p:pipe port="result" step="base-uri"/>
+    </p:with-option>
+    <p:with-option name="debug" select="$debug"><p:empty/></p:with-option>
+    <p:with-option name="debug-dir-uri" select="replace($debug-dir-uri, '^(.+)\?.*$', '$1')"><p:empty/></p:with-option>
+  </epub:zip-package>-->
 
 </p:declare-step>
