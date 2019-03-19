@@ -228,7 +228,8 @@
           <xsl:stylesheet xmlns:c="http://www.w3.org/ns/xproc-step" version="2.0" exclude-result-prefixes="#all">
             <xsl:template match="/">
               <c:zip-manifest>
-                <xsl:apply-templates/>
+                <xsl:apply-templates select="descendant::c:file[matches(@name, 'mimetype')], 
+                                             descendant::c:file[not(matches(@name, 'mimetype'))]"/>
               </c:zip-manifest>
             </xsl:template>
             
